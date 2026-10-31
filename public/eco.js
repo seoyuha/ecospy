@@ -333,7 +333,7 @@ function renderHUD() {
   $("polTxt").textContent = S.pollution + "%";
   const solved = Math.min(Math.floor(S.progress / 2), S.goalCount);
   $("mText").textContent = S.sab ? `${MAP.roomById(S.sab.fac).name} 수리!` : `시설 복구 ${solved} / ${S.goalCount}문제`;
-  const feed = S.feed.filter(f => Date.now() + clockSkew - f.t < 9000).slice(-4);
+  const feed = S.phase === "result" ? [] : S.feed.filter(f => Date.now() + clockSkew - f.t < 9000).slice(-4);  // 결과 발표 전 스포일러 방지
   setHTML($("feed"), feed.map(f => `<div class="${/실패|고장|오염|파괴범 승리/.test(f.text) ? "bad" : /완료|승리|복구/.test(f.text) ? "good" : ""}">${esc(f.text)}</div>`).join(""));
   $("ghostTag").style.display = m.alive ? "none" : "flex";
   $("aFrz").classList.toggle("hide", !(m.role === "destroyer" && m.alive));
@@ -676,21 +676,33 @@ $("mSkip").onclick = () => { socket.emit("vote", { target: "skip" }); SFX.click(
 
 function renderResult() {
   const r = S.result; if (!r || !A) return;
-  let h;
   const vals = Object.entries(r.tally || {}).sort((a, b) => b[1] - a[1]);
-  const tie = !r.ejected && vals.length > 1 && vals[0][1] === vals[1][1];
+  const tie = !r.ejected && vals.length > 1 && vals[0][1] === vals[1][1] && vals[0][0] !== "skip";
   const caught = r.ejected && r.role && /파괴범/.test(r.role);
   const scene = r.ejected ? (caught ? V2.scene.vote_destroyer : V2.scene.vote_ejected) : tie ? V2.scene.vote_tie : V2.scene.vote_skip;
-  $("resultScene").src = scene;
-  $("resultTab").textContent = r.ejected ? (caught ? "파괴범을 찾았어요!" : "투표 결과 · 추방") : tie ? "투표 결과 · 동점" : "투표 결과 · 건너뛰기";
-  $("resultTab").className = "tab " + (caught ? "green" : r.ejected ? "purple" : "");
+  // 1단계: 표 공개 — 받은 표 수만큼 같은 색 표를 카드 아래에 (누가 찍었는지는 보이지 않음)
+  const ids = r.voters || S.players.filter(p => p.alive || p.cid === r.ejectedCid).map(p => p.cid);
+  const dots = (n) => n ? Array.from({ length: n }, (_, i) => `<i class="vdot" style="animation-delay:${0.5 + i * 0.25}s"></i>`).join("") : `<span class="vzero">0표</span>`;
+  const cards = ids.map(cid => {
+    const p = S.players.find(q => q.cid === cid); if (!p) return "";
+    const c = skinOf(p.skin).name;
+    return `<div class="vrc ${cid === r.ejectedCid ? "out" : ""}"><div class="vrcard" style="background-image:url(${V2.vote_card[c] || V2.vote_card.red})"><span class="nm">${esc(p.name)}</span></div><div class="vdots">${dots(r.tally[cid] || 0)}</div></div>`;
+  }).join("") + `<div class="vrc skip"><div class="vrcard skipcard"><img src="${V2.icon.skip}" alt=""><span class="nm">건너뛰기</span></div><div class="vdots">${dots(r.tally.skip || 0)}</div></div>`;
+  // 2단계: 추방인지 아무도 안 나갔는지 발표
+  let h;
   if (r.ejected) {
-    h = `<div class="ejRow">${avatar(r.skin, FR.idle, 110)}</div><div class="bigmsg"><span style="color:${r.color === "#edf2f7" ? "#6b7a88" : r.color}">${esc(r.ejected)}</span>님이 추방되었어요.</div>`;
-    if (r.role) h += `<div style="font-size:20px;font-weight:700;margin-top:4px">${esc(r.ejected)}님은 <b>${esc(r.role)}</b>이었어요.</div>`;
-    if (r.trash) h += `<div style="font-size:18px;color:#7a5a2f;font-weight:900;margin-top:6px">쓰레기 괴물의 작전 성공! (혼자 승리)</div>`;
-  } else h = `<div><img src="${tie ? V2.icon.tie : V2.icon.skip}" style="width:84px" alt=""></div><div class="bigmsg">${tie ? "표가 같아서" : "건너뛰기가 많아서"} 아무도 추방되지 않았어요.</div>`;
-  const tl = Object.entries(r.tally || {}).map(([k, n]) => `${k === "skip" ? "건너뛰기" : esc((S.players.find(p => p.cid === k) || {}).name || "?")} ${n}표`).join(" · ");
-  setHTML($("resultMsg"), h + (tl ? `<div class="hint" style="margin-top:10px">${tl}</div>` : ""));
+    h = `<div class="bigmsg"><span style="color:${r.color === "#edf2f7" ? "#6b7a88" : r.color}">${esc(r.ejected)}</span>님이 추방되었어요.</div>`;
+    if (r.role) h += `<div class="rrole">${esc(r.ejected)}님은 <b>${esc(r.role)}</b>이었어요.</div>`;
+    if (r.trash) h += `<div class="rrole" style="color:#7a5a2f">쓰레기 괴물의 작전 성공! (혼자 승리)</div>`;
+  } else h = `<div class="bigmsg">${tie ? "표가 같아서" : "건너뛰기가 많아서"} 아무도 추방되지 않았어요.</div><div class="rrole">모두 살아남았어요. 다시 시설을 지켜요!</div>`;
+  $("resultTab").textContent = "투표 결과 | Vote Result";
+  $("resultTab").className = "tab";
+  const changed = setHTML($("resultMsg"), `<div class="vreveal">${cards}</div>
+    <div class="vstage2"><img class="sceneTop2" src="${scene}" alt=""><div>${h}</div></div>`);
+  if (changed) {
+    $("resultScene").style.display = "none";
+    setTimeout(() => { const t = $("resultTab"); if (S && S.result === r) { t.textContent = r.ejected ? (caught ? "파괴범을 찾았어요!" : "추방!") : tie ? "동점 · 추방 없음" : "건너뛰기 · 추방 없음"; t.className = "tab " + (caught ? "green" : r.ejected ? "purple" : ""); } }, 3600);
+  }
 }
 function renderEnd() {
   const e = S.end; if (!e || !A) return;

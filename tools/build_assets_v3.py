@@ -85,6 +85,26 @@ def solid(im, thr=215):
     return trim(Image.fromarray(a, "RGBA"))
 
 
+def icon_cut(im, cx, cy, r):
+    """대략 위치(cx,cy) 둘레에서 실제 동그란 아이콘을 찾아 그 중심에 맞춰 둥글게 자름 (바탕 그림자·후광 제외)"""
+    pad = r + 7
+    box = im.crop((cx - pad, cy - pad, cx + pad, cy + pad))
+    a = np.asarray(box.convert("RGB")).astype(int)
+    mx, mn = a.max(2), a.min(2)
+    sat = (mx - mn) / np.maximum(mx, 1)
+    m = (sat > 0.28) | (mx < 205)
+    m = nd.binary_opening(m, iterations=2)
+    lab, n = nd.label(m)
+    if n:
+        c = lab[pad, pad] or (1 + int(np.argmax(nd.sum(m, lab, range(1, n + 1)))))
+        m = nd.binary_fill_holes(lab == c)
+    ys, xs = np.nonzero(m)
+    if not len(xs): return circle_cut(im, cx, cy, r)
+    ccx, ccy = (xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2
+    rr = min(max(xs.max() - xs.min(), ys.max() - ys.min()) / 2 - 1, r + 2)
+    return circle_cut(im, round(cx - pad + ccx), round(cy - pad + ccy), round(rr), blur=0.6)
+
+
 def circle_cut(im, cx, cy, r, blur=0.8):
     m = Image.new("L", im.size, 0)
     ImageDraw.Draw(m).ellipse([cx - r, cy - r, cx + r, cy + r], fill=255)
@@ -210,13 +230,15 @@ mm = {k: small(cx, 976) for k, cx in MM.items()}
 def pill_button(icon, label, col, dark, disabled=False, pressed=False):
     W, H = 240, 216
     im = Image.new("RGBA", (W, H))
-    ic = fit(icon, 150 if pressed else 142).filter(ImageFilter.UnsharpMask(1.5, 80, 2))
-    im.alpha_composite(ic, ((W - ic.width) // 2, 0 if pressed else 4))
+    ic = fit(icon, 140).filter(ImageFilter.UnsharpMask(1.5, 80, 2))
+    if pressed:
+        arr = np.asarray(ic).astype(float); arr[:, :, :3] = np.clip(arr[:, :, :3] * 1.08, 0, 255); ic = Image.fromarray(arr.astype(np.uint8), "RGBA")
+    im.alpha_composite(ic, ((W - ic.width) // 2, max(0, 144 - ic.height) // 2 + (2 if pressed else 0)))
     d = ImageDraw.Draw(im)
     if disabled: col, dark = (170, 176, 184), (110, 116, 124)
     if pressed: col = tuple(min(255, int(c * 1.12)) for c in col)
     y0 = 140
-    d.rounded_rectangle([10, y0 + 6, W - 10, H - 4], 34, fill=dark)
+    d.rounded_rectangle([10, y0 + 4, W - 10, H - 6], 34, fill=dark)
     d.rounded_rectangle([10, y0, W - 10, H - 10], 34, fill=col, outline=(30, 30, 40), width=5)
     d.rounded_rectangle([24, y0 + 8, W - 24, y0 + 26], 10, fill=tuple(min(255, c + 60) for c in col))
     f = ImageFont.truetype(FONT, 36 if len(label) <= 4 else 30)
@@ -232,7 +254,7 @@ V["btn"] = {}
 for k, (i, label, col, dark) in ACT.items():
     cx = round(36 + i * 190.7)
     for stt, dx, r in [("normal", 0, 27), ("pressed", 60, 30), ("disabled", 121, 28)]:
-        V["btn"][f"{k}_{stt}"] = save(pill_button(circle_cut(RS, cx + dx, 844, r), label, col, dark, stt == "disabled", stt == "pressed"), f"v2/btn_{k}_{stt}.png")
+        V["btn"][f"{k}_{stt}"] = save(pill_button(icon_cut(RS, cx + dx, 844, r), label, col, dark, stt == "disabled", stt == "pressed"), f"v2/btn_{k}_{stt}.png")
 
 # ======================================================================== 4. 반짝이 아이콘 세트 (회의 버튼·타이머·게이지·확인 등)
 GL = S("글로시_소셜_디덕션_ui_아이콘_세트.png")

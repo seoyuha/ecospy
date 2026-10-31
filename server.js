@@ -286,11 +286,13 @@ function endMeeting(cls, room) {
   const roleName = ejected ? roleLabel(ejected) : null;
   g.result = {
     ejected: ejected ? ejected.name : null,
+    ejectedCid: ejected ? ejected.cid : null,
+    voters: Object.values(g.players).filter(p => p.alive || p === ejected).map(p => p.cid),
     color: ejected ? ejected.color : null,
     skin: ejected ? ejected.skin : null,
     role: ejected && g.settings.revealRole ? roleName : null,
     trash: ejected && ejected.job === "trash",
-    tally, until: now() + 6000,
+    tally, until: now() + 10000,      // 표 공개(약 3.5초) → 추방/생존 발표
   };
   room.phase = "result";
   if (ejected) {
