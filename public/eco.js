@@ -96,7 +96,9 @@ const store = {
   del(k) { try { localStorage.removeItem(k); } catch (e) {} },
 };
 let actx = null;
+let muted = false; try { muted = localStorage.getItem("eco_mute") === "1"; } catch (e) {}
 function beep(freqs, dur, type, vol) {
+  if (muted) return;
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     let t = actx.currentTime;
@@ -151,11 +153,12 @@ fetch("assets/manifest.json").then(r => r.json()).then(m => {
   for (const c of ["yellow", "green", "red", "blue", "purple"]) css += `.gauge .gf.${c}{border-image-source:url(${V2.gauge["pill_" + c]})}`;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
   // 미리 불러오기
-  const pre = [m.map.image, m.map.mini, ...CH.colors.map(c => c.sheet), m.ui.joy_base_normal, m.ui.joy_base_pressed, m.ui.joy_knob_normal, m.ui.joy_knob_pressed,
+  let pre = [m.map.image, m.map.mini, ...CH.colors.map(c => c.sheet), m.ui.joy_base_normal, m.ui.joy_base_pressed, m.ui.joy_knob_normal, m.ui.joy_knob_pressed,
     m.ui.new_marker_mission, m.ui.new_marker_danger, m.ui.new_marker_meeting, m.ui.marker_complete, m.ui.marker_player, m.ui.status_ghost, m.ui.status_frozen];
   for (const p of Object.values(V2.props)) pre.push(p.src);
   pre.push(V2.icon.emg_button, ...Object.values(V2.vote_card), ...Object.values(V2.role_card), ...Object.values(V2.btn));
   for (const f of Object.values(m.fx)) pre.push(f.src);
+  pre = [...new Set(pre.filter(Boolean))];  // 같은 그림이 두 번 있으면 onload가 덮어써져 99/100에서 멈춤
   let left = pre.length;
   const done = () => { if (--left <= 0) $("loadMsg").textContent = ""; else $("loadMsg").textContent = `그림 불러오는 중… ${pre.length - left}/${pre.length}`; };
   for (const p of pre) { const i = img(p); if (i.complete) done(); else { i.onload = done; i.onerror = done; } }
@@ -197,13 +200,76 @@ function doJoin(auto) {
   if (!code || !name) { if (!auto) $("jErr").textContent = "반 번호와 이름을 모두 써 주세요."; return; }
   const cid = (code === me.code && name === me.name) ? me.cid : null;
   socket.emit("join", { code, name, cid }, (r) => {
-    if (!r || !r.ok) { $("jErr").textContent = (r && r.msg) || "들어갈 수 없어요."; show("join"); return; }
+    if (!r || !r.ok) { show("join"); openT("join"); $("jErr").textContent = (r && r.msg) || "들어갈 수 없어요."; return; }
+    ov("tOv", false);
     me.cid = r.cid; me.name = r.name; me.code = r.code;
     store.set("eco_cid", r.cid); store.set("eco_name", r.name); store.set("eco_code", r.code);
     $("jErr").textContent = "";
   });
 }
 $("jBtn").onclick = () => { SFX.click(); doJoin(false); };
+for (const el of [$("jCode"), $("jName")]) el.addEventListener("keydown", (e) => { if (e.key === "Enter") doJoin(false); });
+
+// ================== 타이틀 화면 버튼 ==================
+const BOOK = [
+  ["recycle", "재활용하다"], ["reuse", "다시 사용하다"], ["save", "아끼다, 구하다"], ["turn off", "끄다"],
+  ["throw away", "버리다"], ["forget", "잊다"], ["energy", "에너지"], ["plastic bag", "비닐봉지"],
+  ["paper cup", "종이컵"], ["cans and bottles", "캔과 병"], ["the stairs", "계단"], ["quickly", "빨리, 빠르게"],
+];
+const SENT = [
+  ["We should save water.", "우리는 물을 아껴야 해."], ["We should save energy.", "우리는 에너지를 아껴야 해."],
+  ["Don't forget to turn off the light.", "불 끄는 것을 잊지 마."], ["Don't forget to turn off the water.", "물 잠그는 것을 잊지 마."],
+  ["Don't forget to use a cup.", "컵 쓰는 것을 잊지 마."], ["Don't forget to use the stairs.", "계단 이용하는 것을 잊지 마."],
+  ["Don't forget to recycle cans and bottles.", "캔과 병 재활용하는 것을 잊지 마."],
+  ["The Earth is sick.", "지구가 아파요."], ["The Earth is our home.", "지구는 우리의 집이에요."],
+  ["What can we do for the Earth?", "지구를 위해 우리는 무엇을 할 수 있을까?"],
+];
+function openT(kind) {
+  const T = {
+    join: ["방 참여하기 | Join"],
+    make: ["방 만들기", `<div class="tBig">방은 <b>선생님</b>이 만들어요!</div>
+      <ol class="tSteps"><li>선생님이 선생님 화면에서 <b>[새 반 만들기]</b>를 눌러요.</li><li>화면에 나온 <b>반 번호</b>를 확인해요.</li><li>학생은 <b>[방 참여하기]</b>에서 반 번호와 이름을 써요.</li><li>선생님이 <b>[자동 모둠 배정]</b>으로 7~9명씩 방을 나눠요.</li></ol>
+      <div class="center"><a class="gbtn small" href="/teacher">선생님 화면 열기</a></div><div class="hint center">학생은 이 버튼을 누르지 않아요.</div>`],
+    how: ["게임 방법 | How to Play", `<ol class="tSteps">
+      <li>반 번호와 이름을 쓰고 들어가면, 선생님이 7~9명씩 방을 나눠요.</li>
+      <li>시작하면 <b>몰래</b> 역할을 받아요: 환경 수호자 · 환경 파괴범 2명 · 중립 1명</li>
+      <li><b>조이스틱</b>으로 길을 따라 걸어요. 화살표와 아래 글이 길을 알려 줘요.</li>
+      <li>시설의 <b>!</b> 장치에서 <b>[문제 풀기]</b> → 12단원 영어 문제를 맞히면 복구율이 올라가요.</li>
+      <li>파괴범은 시설을 고장 내고 친구를 얼려요. 고장 난 시설은 친구 2명이 문제를 맞혀 고쳐요.</li>
+      <li>얼어붙은 친구를 보면 <b>[신고]</b>! 회의에서 영어 문장으로 이야기하고 투표해요.</li>
+      <li>복구율 100% 또는 파괴범을 모두 찾으면 수호자 승리! 오염도 100%면 파괴범 승리!</li></ol>`],
+    book: ["환경 도감 | Eco Book", `<div class="tSub">단어 Words</div><div class="bookGrid">${BOOK.map(([e, k]) => `<div class="bw"><b>${e}</b><span>${k}</span></div>`).join("")}</div>
+      <div class="tSub">문장 Sentences</div><div class="bookSent">${SENT.map(([e, k]) => `<div><b>${esc(e)}</b><span>${k}</span></div>`).join("")}</div>`],
+    mission: ["미션 보기 | Missions", Object.entries(ROLE).map(([k, r]) => `<div class="mRole" style="border-color:${r.color}"><b style="color:${r.color}">${r.name}</b> <small>${r.en} · ${r.team}</small><div>${r.goal}</div></div>`).join("") + `<div class="hint">중립 1명은 기자·쓰레기 괴물·투자자 중 하나가 무작위로 정해져요.</div>`],
+    rank: ["랭킹 | Ranking", `<div class="tBig">🏆 점수와 순위는<br><b>선생님 화면</b>에 나와요.</div><div class="hint center">한 판이 끝날 때마다 이긴 학생에게 점수가 쌓여요.<br>여러 판을 하면서 순위를 올려 보세요!</div>`],
+    set: ["설정 | Settings", `<div class="setRow"><span>소리</span><button class="gbtn small" id="setSnd"></button></div>
+      <div class="setRow"><span>저장된 이름</span><b>${esc(me.name || "없음")}</b></div>
+      <div class="center"><button class="gbtn small gray" id="setReset">이름·반 번호 지우기</button></div>`],
+  }[kind];
+  $("tTab").textContent = T[0];
+  $("tJoin").style.display = kind === "join" ? "" : "none";
+  $("tBody").style.display = kind === "join" ? "none" : "";
+  $("tFrame").className = "frame " + (kind === "book" || kind === "how" || kind === "mission" ? "mid" : "narrow");
+  if (T[1]) $("tBody").innerHTML = T[1];
+  if (kind === "join") $("jErr").textContent = "";
+  if (kind === "set") {
+    const upd = () => { $("setSnd").textContent = muted ? "🔇 꺼짐" : "🔊 켜짐"; };
+    upd(); $("setSnd").onclick = () => { toggleMute(); upd(); };
+    $("setReset").onclick = () => { store.del("eco_cid"); store.del("eco_name"); store.del("eco_code"); me = { cid: null, name: null, code: null }; $("jName").value = ""; $("jCode").value = ""; openT("set"); };
+  }
+  ov("tOv", true);
+  if (kind === "join") setTimeout(() => ($("jCode").value ? $("jName") : $("jCode")).focus(), 50);
+}
+function toggleMute() { muted = !muted; try { localStorage.setItem("eco_mute", muted ? "1" : "0"); } catch (e) {} $("muteMark").className = muted ? "on" : ""; SFX.click(); }
+$("muteMark").className = muted ? "on" : "";
+$("tClose").onclick = () => { SFX.click(); ov("tOv", false); };
+$("tOv").addEventListener("click", (e) => { if (e.target === $("tOv")) ov("tOv", false); });
+for (const b of document.querySelectorAll("#join .hs")) b.onclick = () => {
+  const a = b.dataset.act;
+  if (a === "sound") return toggleMute();
+  SFX.click(); openT(a);
+};
+if (me.name) { $("tpName").textContent = me.name; }
 $("jName").addEventListener("keydown", e => { if (e.key === "Enter") doJoin(false); });
 socket.on("connect", () => { if (me.cid && me.code && me.name && $("jCode").value) doJoin(true); });
 socket.on("kicked", (m) => { store.del("eco_cid"); S = null; show("join"); $("jErr").textContent = m || "선생님이 내보냈어요. 다시 들어와 주세요."; });

@@ -13,17 +13,39 @@
 <body>
 <div id="bg"></div>
 
-<!-- 입장 -->
+<!-- 입장: 타이틀 화면 (그림 위에 투명 버튼) -->
 <div class="screen on" id="join">
-  <div class="frame narrow">
-    <div class="tab">ECO SPY</div>
-    <div class="inner center">
-      <div class="logoRow"><span id="logoAv"></span><div><div class="logoT">에코 스파이</div><div class="logoS">We Should Save the World · 12단원</div></div></div>
+  <div class="titleWrap">
+    <img class="titleImg" src="assets/title.jpg" alt="ECO SPY 지구 수호대">
+    <div class="tProfile"><span id="logoAv"></span><div><b id="tpName">ECO SPY</b><small id="tpSub">12단원 · We Should Save the World</small></div></div>
+    <button class="hs" data-act="join"  style="left:4%;top:64.5%;width:31.7%;height:21%" aria-label="게임 시작"></button>
+    <button class="hs" data-act="make"  style="left:36.2%;top:64.5%;width:28.3%;height:21%" aria-label="방 만들기"></button>
+    <button class="hs" data-act="join"  style="left:65.2%;top:64.5%;width:31.4%;height:21%" aria-label="방 참여하기"></button>
+    <button class="hs" data-act="how"   style="left:2.5%;top:87.5%;width:18.5%;height:8.8%" aria-label="게임 방법"></button>
+    <button class="hs" data-act="book"  style="left:23.1%;top:87.5%;width:18.4%;height:8.8%" aria-label="환경 도감"></button>
+    <button class="hs" data-act="mission" style="left:42.8%;top:87.5%;width:18.4%;height:8.8%" aria-label="미션 보기"></button>
+    <button class="hs" data-act="rank"  style="left:62.5%;top:87.5%;width:16.6%;height:8.8%" aria-label="랭킹"></button>
+    <button class="hs" data-act="set"   style="left:80.6%;top:87.5%;width:16.9%;height:8.8%" aria-label="설정"></button>
+    <button class="hs r" data-act="set"   style="left:73.2%;top:1.8%;width:5.4%;height:9.3%" aria-label="설정"></button>
+    <button class="hs r" data-act="how"   style="left:80.1%;top:1.8%;width:5.4%;height:9.3%" aria-label="게임 방법"></button>
+    <button class="hs r" data-act="rank"  style="left:86.9%;top:1.8%;width:5.4%;height:9.3%" aria-label="랭킹"></button>
+    <button class="hs r" data-act="sound" style="left:93.7%;top:1.8%;width:5.4%;height:9.3%" aria-label="사운드"><span id="muteMark"></span></button>
+    <div class="tLoad hint" id="loadMsg">그림 불러오는 중…</div>
+  </div>
+  <div class="tTurn">📱 화면을 가로로 돌리면 더 크게 보여요</div>
+</div>
+
+<!-- 타이틀 화면 창 -->
+<div class="ov" id="tOv">
+  <div class="frame narrow" id="tFrame">
+    <div class="tab" id="tTab"></div>
+    <button class="xbtn" id="tClose" aria-label="닫기">✕</button>
+    <div class="inner" id="tBody"></div>
+    <div class="inner center" id="tJoin">
       <label class="fld"><span>반 번호</span><input id="jCode" inputmode="numeric" maxlength="6" placeholder="선생님 화면의 숫자"></label>
       <label class="fld"><span>내 이름</span><input id="jName" maxlength="10" placeholder="이름"></label>
       <button class="gbtn" id="jBtn"><i>▶</i>들어가기</button>
       <div class="err" id="jErr"></div>
-      <div class="hint" id="loadMsg">그림 불러오는 중…</div>
     </div>
   </div>
 </div>
