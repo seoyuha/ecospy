@@ -439,3 +439,23 @@ input{border-color:var(--cyan-l)}
 /* 행동 버튼 그림자: 버튼 바로 아래로 */
 .act{filter:drop-shadow(0 2px 2px rgba(0,0,0,.3))}
 .imgbtn{filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+/* 정답/오답 배지: 그림 전체가 패널 안에 보이도록 오른쪽 아래 */
+#qBadge{left:auto;right:26px;top:auto;bottom:20px;width:170px;z-index:5}
+@media (max-width:640px){#qBadge{width:112px;left:auto;right:12px;bottom:12px}}
+#qFeedback{padding-right:150px;padding-left:150px}
+@media (max-width:640px){#qBadge{width:104px;left:12px;right:auto;bottom:92px;top:auto}#qFeedback{padding:0}
+  .qBottom{position:relative}}
+#qBadge{right:16px}
+/* 폰: 긴 문제도 한 화면에 — 보기·버튼을 조금 줄이고, 배지는 왼쪽 아래 / 안내 글은 그 오른쪽 */
+@media (max-width:640px){
+  .qHead .qtext{font-size:19px;line-height:1.25}
+  #qPic{width:66px;height:66px}
+  .qsub{font-size:13px;margin:2px 0 6px}
+  .choices{gap:8px}
+  .choice{min-height:50px;font-size:17px;padding:6px 10px}
+  .choice .lt{width:34px;height:34px;font-size:18px}
+  .qBottom{margin-top:6px;gap:2px}
+  #qSubmit{width:96px;height:86px;margin-top:-2px}
+  #qBadge{width:100px;left:10px;right:auto;bottom:10px}
+  #qFeedback{font-size:16px;padding:0 0 0 104px;text-align:left;align-self:stretch;min-height:40px}
+}

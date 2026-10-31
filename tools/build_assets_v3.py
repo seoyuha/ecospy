@@ -300,7 +300,8 @@ for c in man["chars"]["colors"]:
 
 # ======================================================================== 6. 문제 결과 배지 (Correct! / Wrong! ...)
 QS = S("a_bright_colorful_cartoon_style_game_ui_asset_sh.png")
-qa = np.asarray(QS)[:200, :, 3] > 60
+QB = 286  # 배지 줄 아래 끝(이 아래는 문제 카드 줄)
+qa = np.asarray(QS)[:QB, :, 3] > 60
 cols = np.nonzero(qa.any(0))[0]
 # 위쪽 줄 배지 5개를 빈 세로줄로 나눔
 gaps, start = [], cols[0]
@@ -310,7 +311,7 @@ gaps.append((start, cols[-1] + 1))
 gaps = [g for g in gaps if g[1] - g[0] > 80][:5]
 V["result"] = {}
 for k, (x0, x1) in zip(["correct", "wrong", "mission_complete", "level_up", "clear"], gaps):
-    V["result"][k] = save(fit(largest(QS.crop((x0, 0, x1, 200))), 260), f"v2/r_{k}.png")
+    V["result"][k] = save(fit(QS.crop((x0, 0, x1, QB)), 300), f"v2/r_{k}.png")
 
 # ======================================================================== 7. 시설 그림 (정상·고장·수리 중·복구)
 FS = S("a_clean_bright_colorful_game_asset_sheet_ui_ic.png")

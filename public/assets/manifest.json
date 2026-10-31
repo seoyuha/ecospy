@@ -266,8 +266,7 @@
   "result": {
    "correct": "assets/v2/r_correct.png",
    "wrong": "assets/v2/r_wrong.png",
-   "mission_complete": "assets/v2/r_mission_complete.png",
-   "level_up": "assets/v2/r_level_up.png"
+   "mission_complete": "assets/v2/r_mission_complete.png"
   },
   "facility": {
    "solar": "assets/v2/f_solar_normal.png",
