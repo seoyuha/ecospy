@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>ECO SPY 에코 스파이</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/jua/jua.css">
+<link rel="stylesheet" href="eco.css">
+</head>
+<body>
+<div id="bg"></div>
+
+<!-- 입장 -->
+<div class="screen on" id="join">
+  <div class="frame narrow">
+    <div class="tab">ECO SPY</div>
+    <div class="inner center">
+      <div class="logoRow"><span id="logoAv"></span><div><div class="logoT">에코 스파이</div><div class="logoS">We Should Save the World · 12단원</div></div></div>
+      <label class="fld"><span>반 번호</span><input id="jCode" inputmode="numeric" maxlength="6" placeholder="선생님 화면의 숫자"></label>
+      <label class="fld"><span>내 이름</span><input id="jName" maxlength="10" placeholder="이름"></label>
+      <button class="gbtn" id="jBtn"><i>▶</i>들어가기</button>
+      <div class="err" id="jErr"></div>
+      <div class="hint" id="loadMsg">그림 불러오는 중…</div>
+    </div>
+  </div>
+</div>
+
+<!-- 대기 -->
+<div class="screen" id="wait">
+  <div class="frame narrow">
+    <div class="tab">대기실 | Waiting Room</div>
+    <div class="inner center">
+      <img class="waitScene" id="wScene" alt="">
+      <img class="waitIc pulse" id="wIcon" alt="">
+      <h2 id="wTitle">선생님이 모둠을 나누고 있어요</h2>
+      <div class="hint" id="wSub">잠시만 기다려 주세요.</div>
+      <div class="members" id="wMembers"></div>
+      <div class="hint" id="wMe"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 게임 -->
+<div class="screen" id="game">
+  <canvas id="cv"></canvas>
+  <!-- 위쪽 HUD -->
+  <button class="hud hcard" id="pCard">
+    <span id="pAv"></span>
+    <span class="pTxt"><b id="pName">ECO SPY</b><small id="pRole">내 역할</small></span>
+    <span class="qmark">?</span>
+  </button>
+  <div class="hud hcard" id="mCard">
+    <div class="mTitle"><span>현재 미션</span><b id="mText">시설 복구하기</b></div>
+    <div class="gRow"><img class="gIc" id="icRec" alt=""><div class="gauge" id="gRec"></div><b id="progTxt">0%</b></div>
+    <div class="gRow"><img class="gIc" id="icPol" alt=""><div class="gauge" id="gPol"></div><b id="polTxt">0%</b></div>
+  </div>
+  <div class="hud hcard" id="tCard"><img id="icTim" alt=""><div><small>남은 시간</small><b id="timer">--:--</b></div></div>
+  <div class="hud hcard" id="mini"><small>미니맵</small><canvas id="miniCv"></canvas></div>
+  <div class="hud" id="feed"></div>
+  <div class="hud" id="alert"><img id="alertIc" alt=""><span id="alertTxt"></span></div>
+  <div class="hud hcard" id="mission"></div>
+  <div class="hud hcard" id="guide"></div>
+  <div class="hud hcard" id="ghostTag"><img id="ghostIc" alt="">오염되어 유령이 됐어요. 문제를 풀면 팀에 절반 점수!</div>
+  <div id="joy"><img id="joyBase" alt=""><img id="knob" alt=""></div>
+  <div id="actions">
+    <button class="act" id="aUse" aria-label="문제 풀기"></button>
+    <button class="act hide" id="aRep" aria-label="신고"></button>
+    <button class="act hide" id="aEmg" aria-label="긴급회의"></button>
+    <button class="act hide" id="aFrz" aria-label="오염시키기"></button>
+    <button class="act hide" id="aSab" aria-label="방해"></button>
+    <button class="act hide" id="aScp" aria-label="특종 지목"></button>
+    <button class="act hide" id="aInv" aria-label="투자하기"></button>
+  </div>
+</div>
+
+<!-- 역할 카드 -->
+<div class="ov" id="roleOv"><div class="frame wide" id="rolePanel"></div></div>
+<!-- 문제 -->
+<div class="ov" id="qOv"><div class="frame quiz">
+  <div class="tab">영어 미션 | English Quiz</div>
+  <button class="xbtn" id="qClose" aria-label="닫기">✕</button>
+  <div class="inner">
+    <div class="qTop"><span class="chip" id="qWhere"></span><span class="chip red" id="qFix">🔧 고장 수리</span></div>
+    <div class="qHead"><img id="qPic" alt=""><div class="qtext" id="qText"></div></div>
+    <img id="qBadge" alt="">
+    <div class="qsub" id="qSub">알맞은 답을 고른 뒤 [정답 확인]을 눌러요.</div>
+    <div class="choices" id="qChoices"></div>
+    <div class="qBottom"><button class="imgbtn" id="qSubmit"></button><div id="qFeedback"></div></div>
+  </div>
+</div></div>
+<!-- 방해 / 특종 / 투자 메뉴 -->
+<div class="ov" id="menuOv"><div class="frame wide" id="menuPanel"></div></div>
+<!-- 회의 -->
+<div class="ov" id="meeting"><div class="frame meet">
+  <div class="tab" id="mTab">긴급회의 | Emergency Meeting</div>
+  <div class="inner">
+    <div class="notice"><b id="mTitle">환경 파괴범을 찾기 위해 의견을 나누세요!</b><span id="mInfo"></span><span class="mTimer" id="mTimer">90</span></div>
+    <div class="mbody">
+      <div class="mcol">
+        <div class="vcards" id="mPlayers"></div>
+        <div class="voteRow">
+          <button class="imgbtn" id="mVote"></button>
+          <button class="pill gray" id="mSkip">건너뛰기</button>
+          <span class="hint" id="mVoteInfo"></span>
+        </div>
+      </div>
+      <div class="mcol">
+        <div class="chat" id="mChat"></div>
+        <div class="picker" id="mPicker"><div id="mPickTitle"></div><div class="row" id="mPickRow"></div></div>
+        <div class="sents" id="mSents"></div>
+      </div>
+    </div>
+  </div>
+</div></div>
+<!-- 추방 결과 -->
+<div class="ov" id="resultOv"><div class="frame wide"><div class="tab" id="resultTab">투표 결과</div><div class="inner center"><img class="sceneTop" id="resultScene" alt=""><div id="resultMsg"></div></div></div></div>
+<!-- 게임 끝 -->
+<div class="ov" id="endOv"><div class="frame wide">
+  <div class="tab" id="endTab">게임 결과</div>
+  <div class="inner">
+    <img class="sceneTop" id="endScene" alt="">
+    <div class="endHead" id="endHead"></div>
+    <div class="reveal" id="endList"></div>
+    <div class="hint center">선생님이 다음 판을 시작하면 자동으로 시작돼요.</div>
+  </div>
+</div></div>
+
+<div id="splash"></div>
+<div id="toast"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="map.js"></script>
+<script src="eco.js"></script>
+</body>
+</html>

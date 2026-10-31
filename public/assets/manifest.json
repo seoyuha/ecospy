@@ -1,0 +1,405 @@
+{
+ "source": "상세 일러스트 원본 묶음 — 00_화려한_원본_통짜시안",
+ "map": {
+  "image": "assets/map/map.jpg",
+  "mini": "assets/map/mini.jpg",
+  "size": [
+   1800,
+   1200
+  ]
+ },
+ "chars": {
+  "cell": [
+   172,
+   176
+  ],
+  "foot": 170,
+  "frames": [
+   "idle",
+   "walk1",
+   "walk2",
+   "walk3",
+   "walk4",
+   "walk5",
+   "walk6",
+   "walk7",
+   "walk8",
+   "walk9",
+   "walk10",
+   "frozen",
+   "ghost",
+   "report"
+  ],
+  "colors": [
+   {
+    "name": "red",
+    "hex": "#fd202b",
+    "sheet": "assets/chars/red.png"
+   },
+   {
+    "name": "blue",
+    "hex": "#0174fa",
+    "sheet": "assets/chars/blue.png"
+   },
+   {
+    "name": "green",
+    "hex": "#11be5a",
+    "sheet": "assets/chars/green.png"
+   },
+   {
+    "name": "yellow",
+    "hex": "#fed423",
+    "sheet": "assets/chars/yellow.png"
+   },
+   {
+    "name": "purple",
+    "hex": "#a557d6",
+    "sheet": "assets/chars/purple.png"
+   },
+   {
+    "name": "orange",
+    "hex": "#fd7518",
+    "sheet": "assets/chars/orange.png"
+   },
+   {
+    "name": "cyan",
+    "hex": "#36dbdb",
+    "sheet": "assets/chars/cyan.png"
+   },
+   {
+    "name": "pink",
+    "hex": "#fc87ba",
+    "sheet": "assets/chars/pink.png"
+   },
+   {
+    "name": "brown",
+    "hex": "#8f563e",
+    "sheet": "assets/chars/brown.png"
+   },
+   {
+    "name": "white",
+    "hex": "#edf2f7",
+    "sheet": "assets/chars/white.png"
+   },
+   {
+    "name": "lime",
+    "hex": "#94e52d",
+    "sheet": "assets/chars/lime.png"
+   },
+   {
+    "name": "black",
+    "hex": "#4c5059",
+    "sheet": "assets/chars/black.png"
+   }
+  ],
+  "idx": {
+   "idle": 0,
+   "walk": 1,
+   "walkN": 10,
+   "frozen": 11,
+   "ghost": 12,
+   "report": 13
+  }
+ },
+ "ui": {
+  "joy_base_normal": "assets/ui/joy_base_normal.png",
+  "joy_knob_normal": "assets/ui/joy_knob_normal.png",
+  "joy_base_pressed": "assets/ui/joy_base_pressed.png",
+  "joy_knob_pressed": "assets/ui/joy_knob_pressed.png",
+  "new_marker_mission": "assets/ui/m_mission.png",
+  "new_marker_danger": "assets/ui/m_danger.png",
+  "new_marker_meeting": "assets/ui/m_reporter.png",
+  "marker_complete": "assets/ui/m_done.png",
+  "marker_warning": "assets/ui/m_warn_pin.png",
+  "marker_player": "assets/ui/m_player.png",
+  "status_ghost": "assets/ui/st_ghost.png",
+  "status_frozen": "assets/ui/st_frozen.png",
+  "status_ready": "assets/ui/st_ready.png",
+  "status_offline": "assets/ui/st_offline.png",
+  "status_waiting": "assets/ui/st_waiting.png",
+  "status_question": "assets/ui/st_question.png"
+ },
+ "fx": {
+  "repair": {
+   "src": "assets/fx/repair.png",
+   "size": 160,
+   "n": 8
+  },
+  "restore": {
+   "src": "assets/fx/repair.png",
+   "size": 160,
+   "n": 8
+  },
+  "sabotage": {
+   "src": "assets/fx/sabotage.png",
+   "size": 160,
+   "n": 8
+  },
+  "investment": {
+   "src": "assets/fx/investment.png",
+   "size": 160,
+   "n": 8
+  },
+  "pollution": {
+   "src": "assets/fx/pollution.png",
+   "size": 160,
+   "n": 8
+  },
+  "scoop": {
+   "src": "assets/fx/scoop.png",
+   "size": 160,
+   "n": 8
+  },
+  "warning": {
+   "src": "assets/fx/warning.png",
+   "size": 128,
+   "n": 8
+  },
+  "purify": {
+   "src": "assets/fx/purify.png",
+   "size": 128,
+   "n": 6
+  }
+ },
+ "teacher": {
+  "ready": "assets/ui/st_ready.png",
+  "offline": "assets/ui/st_offline.png",
+  "waiting": "assets/ui/st_waiting.png",
+  "question": "assets/ui/st_question.png",
+  "running": "assets/teacher/running.png",
+  "issue": "assets/teacher/issue.png",
+  "complete": "assets/teacher/complete.png"
+ },
+ "v2": {
+  "role_card": {
+   "guardian": "assets/v2/card_guardian.png",
+   "destroyer": "assets/v2/card_destroyer.png",
+   "reporter": "assets/v2/card_reporter.png",
+   "trash": "assets/v2/card_trash.png",
+   "investor": "assets/v2/card_investor.png"
+  },
+  "role_face": {
+   "guardian": "assets/v2/face_guardian.png",
+   "destroyer": "assets/v2/face_destroyer.png",
+   "reporter": "assets/v2/face_reporter.png",
+   "trash": "assets/v2/face_trash.png",
+   "investor": "assets/v2/face_investor.png"
+  },
+  "role_badge": {
+   "guardian": "assets/v2/badge_guardian.png",
+   "destroyer": "assets/v2/badge_destroyer.png",
+   "reporter": "assets/v2/badge_reporter.png",
+   "trash": "assets/v2/badge_trash.png",
+   "investor": "assets/v2/badge_investor.png"
+  },
+  "btn": {
+   "use_normal": "assets/v2/btn_use_normal.png",
+   "use_pressed": "assets/v2/btn_use_pressed.png",
+   "use_disabled": "assets/v2/btn_use_disabled.png",
+   "report_normal": "assets/v2/btn_report_normal.png",
+   "report_pressed": "assets/v2/btn_report_pressed.png",
+   "report_disabled": "assets/v2/btn_report_disabled.png",
+   "emg_normal": "assets/v2/btn_emg_normal.png",
+   "emg_pressed": "assets/v2/btn_emg_pressed.png",
+   "emg_disabled": "assets/v2/btn_emg_disabled.png",
+   "frz_normal": "assets/v2/btn_frz_normal.png",
+   "frz_pressed": "assets/v2/btn_frz_pressed.png",
+   "frz_disabled": "assets/v2/btn_frz_disabled.png",
+   "sab_normal": "assets/v2/btn_sab_normal.png",
+   "sab_pressed": "assets/v2/btn_sab_pressed.png",
+   "sab_disabled": "assets/v2/btn_sab_disabled.png",
+   "scp_normal": "assets/v2/btn_scp_normal.png",
+   "scp_pressed": "assets/v2/btn_scp_pressed.png",
+   "scp_disabled": "assets/v2/btn_scp_disabled.png",
+   "inv_normal": "assets/v2/btn_inv_normal.png",
+   "inv_pressed": "assets/v2/btn_inv_pressed.png",
+   "inv_disabled": "assets/v2/btn_inv_disabled.png",
+   "repair_normal": "assets/v2/btn_repair_normal.png",
+   "repair_pressed": "assets/v2/btn_repair_pressed.png",
+   "repair_disabled": "assets/v2/btn_repair_disabled.png",
+   "confirm_normal": "assets/v2/btn_confirm_normal.png",
+   "confirm_pressed": "assets/v2/btn_confirm_pressed.png",
+   "confirm_disabled": "assets/v2/btn_confirm_disabled.png",
+   "vote_normal": "assets/v2/btn_vote_normal.png",
+   "vote_pressed": "assets/v2/btn_vote_pressed.png",
+   "vote_disabled": "assets/v2/btn_vote_disabled.png",
+   "start_normal": "assets/v2/btn_start_normal.png",
+   "start_pressed": "assets/v2/btn_start_pressed.png",
+   "start_disabled": "assets/v2/btn_start_disabled.png"
+  },
+  "icon": {
+   "emg_button": "assets/v2/i_emg_button.png",
+   "warn": "assets/v2/i_warn.png",
+   "check": "assets/v2/i_check.png",
+   "cross": "assets/v2/i_cross.png",
+   "skip": "assets/v2/i_skip.png",
+   "tie": "assets/v2/i_tie.png",
+   "chat": "assets/v2/i_chat.png",
+   "search": "assets/v2/i_search.png",
+   "megaphone": "assets/v2/i_megaphone.png",
+   "timer": "assets/v2/i_timer.png"
+  },
+  "gauge": {
+   "empty": "assets/v2/g_empty.png",
+   "w": 520,
+   "h": 80,
+   "pill_yellow": "assets/v2/gp_yellow.png",
+   "pill_green": "assets/v2/gp_green.png",
+   "pill_red": "assets/v2/gp_red.png",
+   "pill_blue": "assets/v2/gp_blue.png",
+   "pill_purple": "assets/v2/gp_purple.png"
+  },
+  "vote_card": {
+   "red": "assets/v2/vote_red.png",
+   "orange": "assets/v2/vote_orange.png",
+   "yellow": "assets/v2/vote_yellow.png",
+   "green": "assets/v2/vote_green.png",
+   "blue": "assets/v2/vote_blue.png",
+   "pink": "assets/v2/vote_pink.png",
+   "purple": "assets/v2/vote_purple.png",
+   "cyan": "assets/v2/vote_cyan.png",
+   "brown": "assets/v2/vote_brown.png",
+   "white": "assets/v2/vote_white.png",
+   "lime": "assets/v2/vote_lime.png",
+   "black": "assets/v2/vote_black.png"
+  },
+  "result": {
+   "correct": "assets/v2/r_correct.png",
+   "wrong": "assets/v2/r_wrong.png",
+   "mission_complete": "assets/v2/r_mission_complete.png",
+   "level_up": "assets/v2/r_level_up.png"
+  },
+  "facility": {
+   "solar": "assets/v2/f_solar_normal.png",
+   "water": "assets/v2/f_water_normal.png",
+   "recycle": "assets/v2/f_recycle_normal.png",
+   "forest": "assets/v2/f_forest_normal.png",
+   "ocean": "assets/v2/f_ocean_normal.png",
+   "base": "assets/v2/f_base.png"
+  },
+  "facility_state": {
+   "solar": {
+    "normal": "assets/v2/f_solar_normal.png",
+    "broken": "assets/v2/f_solar_broken.png",
+    "repairing": "assets/v2/f_solar_repairing.png",
+    "restored": "assets/v2/f_solar_restored.png"
+   },
+   "water": {
+    "normal": "assets/v2/f_water_normal.png",
+    "broken": "assets/v2/f_water_broken.png",
+    "repairing": "assets/v2/f_water_repairing.png",
+    "restored": "assets/v2/f_water_restored.png"
+   },
+   "recycle": {
+    "normal": "assets/v2/f_recycle_normal.png",
+    "broken": "assets/v2/f_recycle_broken.png",
+    "repairing": "assets/v2/f_recycle_repairing.png",
+    "restored": "assets/v2/f_recycle_restored.png"
+   },
+   "forest": {
+    "normal": "assets/v2/f_forest_normal.png",
+    "broken": "assets/v2/f_forest_broken.png",
+    "repairing": "assets/v2/f_forest_repairing.png",
+    "restored": "assets/v2/f_forest_restored.png"
+   },
+   "ocean": {
+    "normal": "assets/v2/f_ocean_normal.png",
+    "broken": "assets/v2/f_ocean_broken.png",
+    "repairing": "assets/v2/f_ocean_repairing.png",
+    "restored": "assets/v2/f_ocean_restored.png"
+   }
+  },
+  "props": {
+   "smoke": {
+    "src": "assets/v2/p_smoke.png",
+    "w": 134,
+    "h": 152
+   },
+   "smoke_fire": {
+    "src": "assets/v2/p_smoke_fire.png",
+    "w": 152,
+    "h": 148
+   },
+   "fire_s": {
+    "src": "assets/v2/p_fire_s.png",
+    "w": 58,
+    "h": 83
+   },
+   "fire_l": {
+    "src": "assets/v2/p_fire_l.png",
+    "w": 103,
+    "h": 114
+   },
+   "warn": {
+    "src": "assets/v2/p_warn.png",
+    "w": 90,
+    "h": 83
+   },
+   "barrier": {
+    "src": "assets/v2/p_barrier.png",
+    "w": 129,
+    "h": 86
+   },
+   "cone": {
+    "src": "assets/v2/p_cone.png",
+    "w": 69,
+    "h": 79
+   },
+   "crane": {
+    "src": "assets/v2/p_crane.png",
+    "w": 155,
+    "h": 164
+   },
+   "scaffold": {
+    "src": "assets/v2/p_scaffold.png",
+    "w": 214,
+    "h": 144
+   },
+   "toolbox": {
+    "src": "assets/v2/p_toolbox.png",
+    "w": 94,
+    "h": 66
+   },
+   "crew_fix": {
+    "src": "assets/v2/p_crew_fix.png",
+    "w": 133,
+    "h": 126
+   },
+   "plus": {
+    "src": "assets/v2/p_plus.png",
+    "w": 80,
+    "h": 64
+   },
+   "ring": {
+    "src": "assets/v2/p_ring.png",
+    "w": 152,
+    "h": 130
+   },
+   "burst": {
+    "src": "assets/v2/p_burst.png",
+    "w": 201,
+    "h": 138
+   },
+   "beam_green": {
+    "src": "assets/v2/p_beam_green.png",
+    "w": 112,
+    "h": 134
+   },
+   "dome_leaf": {
+    "src": "assets/v2/p_dome_leaf.png",
+    "w": 179,
+    "h": 145
+   }
+  },
+  "scene": {
+   "loading": "assets/v2/s_title.jpg",
+   "meeting": "assets/v2/s_meeting.jpg",
+   "guardian_win": "assets/v2/s_gwin.jpg",
+   "destroyer_win": "assets/v2/s_dwin.jpg",
+   "vote_destroyer": "assets/v2/s_caught.jpg",
+   "vote_ejected": "assets/v2/s_ejected.jpg",
+   "vote_tie": "assets/v2/s_tie.jpg",
+   "vote_skip": "assets/v2/s_skip.jpg"
+  }
+ }
+}

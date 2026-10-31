@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECO SPY 교사 화면</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fonts/jua/jua.css">
+<style>
+:root{--navy:#0a2a53;--navy-d:#061a36;--cyan:#26acee;--cyan-l:#56ccee;--paper:#edfaff;--tab:#07528e;--ink:#0f2a48;--sub:#4d6884;
+  --green:#1fae63;--red:#e5484d;--gold:#f5b11c;--line:#b9dcf0}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:#0b3d5c;color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif}
+#bg{position:fixed;inset:0;background:#0b3d5c center/cover no-repeat;filter:blur(4px) brightness(.45);transform:scale(1.04);z-index:-1}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;padding:0}
+/* 그림 버튼 (교사용 빈 버튼 그림 + 글씨) */
+.tb{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:56px;min-width:168px;padding:0 18px 4px;background:center/100% 100% no-repeat;
+  color:#fff;font-size:17px;font-weight:900;text-shadow:0 2px 0 rgba(0,0,0,.25);white-space:nowrap}
+.tb.sm{height:44px;min-width:120px;font-size:15px;padding:0 14px 3px}
+.tb:active{transform:translateY(2px)}
+.tb:disabled{filter:grayscale(1) opacity(.5)}
+/* 시안 패널 */
+.frame{position:relative;background:var(--navy);border:4px solid var(--cyan);border-radius:24px;padding:10px;box-shadow:0 10px 30px rgba(0,0,0,.4);margin-top:20px}
+.frame>.tab{position:absolute;left:24px;top:-20px;background:var(--tab);border:3px solid var(--cyan);border-radius:14px;color:#fff;font-weight:900;font-size:18px;padding:5px 20px;z-index:2;white-space:nowrap}
+.frame>.inner{background:var(--paper);border:3px solid var(--cyan-l);border-radius:16px;padding:30px 14px 14px}
+.hint{font-size:13.5px;color:var(--sub);font-weight:500;line-height:1.55}
+header{position:sticky;top:0;z-index:10;background:rgba(6,26,54,.95);border-bottom:3px solid var(--cyan);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:24px;font-weight:900;letter-spacing:-.5px}
+header h1 small{font-size:14px;color:#9fd8ff;font-weight:700;margin-left:6px}
+.codeBox{display:flex;align-items:center;gap:10px;background:var(--tab);border:3px solid var(--cyan);border-radius:16px;padding:4px 6px 4px 14px}
+.codeBox span{font-weight:700;color:#cfe9ff}
+.codeBox .code{color:var(--navy)}
+.code{background:#fff;color:var(--navy);border-radius:10px;padding:0 14px;font-size:34px;font-weight:900;letter-spacing:4px}
+.url{font-size:14px;color:#cfe9ff;font-weight:700}
+.toggle{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;background:#0d3766;border:2px solid #2b86cf;border-radius:12px;padding:6px 12px;cursor:pointer}
+.toggle input{width:20px;height:20px}
+main{padding:12px 20px 30px;display:grid;grid-template-columns:350px 1fr;gap:18px;align-items:start}
+@media(max-width:980px){main{grid-template-columns:1fr}}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.set{display:grid;grid-template-columns:1fr 84px;gap:6px 10px;align-items:center;font-size:15px;font-weight:700}
+.set input{width:84px;font-family:inherit;font-size:17px;font-weight:700;padding:4px 8px;border-radius:10px;border:2px solid var(--line);text-align:center;color:var(--ink)}
+.checks label{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin:5px 0}
+.checks input{width:18px;height:18px}
+.checks img{width:28px;height:28px}
+.stu{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#fff;border:2px solid var(--line);border-radius:999px;padding:3px 6px 3px 3px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.chip img{width:24px;height:24px}
+.chip.off{opacity:.5}
+.chip select{font-family:inherit;font-size:13px;border-radius:8px;border:1px solid var(--line)}
+.chip .x{padding:0 4px;font-size:14px;color:var(--red);font-weight:900}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:4px 16px}
+.room .inner{padding-top:34px}
+.rhead{display:flex;align-items:center;gap:8px}
+.rhead img{width:36px;height:36px}
+.rhead b{font-size:17px}
+.rhead .cnt{font-size:14px;color:var(--sub);font-weight:700}
+.ph{margin-left:auto;font-size:13px;font-weight:900;border-radius:999px;padding:3px 12px;color:#fff;background:#8a96a1}
+.ph.play{background:var(--green)} .ph.meeting,.ph.result{background:#f08c2e} .ph.ended{background:#3a8dde}
+.bars{display:grid;grid-template-columns:24px 1fr 46px;gap:5px 8px;align-items:center;font-size:14px;font-weight:900;margin:10px 0 6px}
+.bars img{width:24px;height:24px}
+.gauge{position:relative;height:24px}
+.gauge span{position:absolute;inset:0;border-style:solid;border-width:0 12px;border-image-slice:0 35 fill;border-image-repeat:stretch}
+.gauge.g2 .ge{inset:0;border-width:0 12px;border-image-slice:0 40 fill}
+.gauge.g2 .gf{inset:auto;left:5.5px;top:20%;height:60%;border-width:0 7px;border-image-slice:0 24 fill;min-width:14px}
+.sub2{font-size:13.5px;color:var(--sub);font-weight:700}
+.sub2 .warn{color:#c22f35}
+.pl{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.pp{display:inline-flex;align-items:center;gap:3px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:1px 8px 1px 2px;font-size:14px;font-weight:700}
+.pp.out{opacity:.5}
+.pp.win{border-color:var(--gold);background:#fff8dc}
+.pp small{font-size:12px;color:var(--sub)}
+.pp .rD{color:#d02f36} .pp .rN{color:#7a5a00} .pp .rG{color:#11804a}
+.av{display:inline-block;background-repeat:no-repeat;flex:none}
+.endline{margin-top:8px;font-weight:900}
+.feed{font-size:13px;color:var(--sub);margin-top:6px;font-weight:500;border-top:1px dashed var(--line);padding-top:6px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--sub);font-size:13px}
+tr:nth-child(2) td{background:#fff3c4} tr:nth-child(3) td{background:#eef2f6} tr:nth-child(4) td{background:#f8e7d8}
+.start{width:min(520px,calc(100% - 32px));margin:12vh auto 0;text-align:center}
+.start .inner{padding:40px 20px 24px}
+.start h2{margin:6px 0 2px;font-size:28px;font-weight:900}
+.empty{background:var(--paper);border:3px dashed var(--cyan-l);border-radius:16px;padding:20px;margin-top:20px}
+/* ===== 2차 디자인 (밝은 만화풍) ===== */
+:root{--navy:#0d3f7a;--cyan:#3db8ff;--cyan-l:#9edcff;--paper:#f7fcff;--tab:#1b7fe0;--ink:#173252;--sub:#4a6a8c;--line:#bfe3fb}
+body{background:#2aa3e6}
+#bg{filter:blur(3px) brightness(.8) saturate(1.1)}
+.frame{background:linear-gradient(#5ac8ff,#1b86e8);border:5px solid var(--navy);box-shadow:0 8px 0 rgba(8,40,90,.35),0 14px 30px rgba(0,0,0,.3)}
+.frame>.inner{background:var(--paper);border:4px solid var(--cyan-l)}
+.frame>.tab{font-family:"Jua",sans-serif;font-weight:400;font-size:21px;background:linear-gradient(#36a3ff,#1565c8);border:4px solid var(--navy);text-shadow:0 2px 0 #0b3c78;box-shadow:0 3px 0 rgba(8,40,90,.45)}
+header{background:linear-gradient(#36a3ff,#1565c8);border-bottom:5px solid var(--navy)}
+header h1{font-family:"Jua",sans-serif;font-weight:400;font-size:30px;text-shadow:0 3px 0 #0b3c78}
+.codeBox{background:#0d3f7a;border-color:#9edcff}
+.code{font-family:"Jua",sans-serif;font-weight:400}
+.toggle{background:#0d3f7a;border-color:#9edcff}
+.tb{font-family:"Jua",sans-serif;font-weight:400;font-size:19px;border-radius:999px;border:4px solid #0b3c78;background:linear-gradient(#5ab8ff,#1b7fe0)!important;
+  box-shadow:0 5px 0 #0b3c78;height:52px;padding:0 22px 3px;text-shadow:0 2px 0 rgba(0,0,0,.35)}
+.tb.sm{height:44px;font-size:17px}
+.tb:active{transform:translateY(3px);box-shadow:0 2px 0 #0b3c78}
+.tb.c-start,.tb.c-confirm{background:linear-gradient(#6ee36a,#1f9a3a)!important;border-color:#0e5a24;box-shadow:0 5px 0 #0e5a24}
+.tb.c-end,.tb.c-cancel{background:linear-gradient(#ff7a7a,#d42a32)!important;border-color:#7d1218;box-shadow:0 5px 0 #7d1218}
+.tb.c-announce{background:linear-gradient(#ffd54a,#f0a000)!important;border-color:#8a5a00;box-shadow:0 5px 0 #8a5a00}
+.tb.c-view{background:linear-gradient(#c6ced8,#8d98a6)!important;border-color:#4b5563;box-shadow:0 5px 0 #4b5563}
+.start h2{font-family:"Jua",sans-serif;font-weight:400;font-size:36px;color:#1565c8}
+.ph{font-family:"Jua",sans-serif;font-weight:400;font-size:14px}
+.rhead b{font-family:"Jua",sans-serif;font-weight:400;font-size:19px}
+/* 버튼 크기 통일: 모든 버튼 같은 높이·글자, 두 개씩 한 줄 */
+.tb,.tb.sm{height:52px;font-size:18px;min-width:0;padding:0 10px 3px}
+.btns.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}
+.btns.grid2 .tb{width:100%}
+.room .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.room .btns .tb{width:100%}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="startView" class="frame start">
+  <div class="tab" style="left:50%;transform:translateX(-50%)">ECO SPY 교사 화면</div>
+  <div class="inner">
+    <div id="startAv"></div>
+    <h2>에코 스파이</h2>
+    <p class="hint">12단원 We Should Save the World 영어 추리 게임</p>
+    <button class="tb" id="createBtn" style="min-width:240px;height:66px;font-size:20px">새 반 만들기</button>
+    <p class="hint" id="resumeHint"></p>
+  </div>
+</div>
+
+<div id="mainView" style="display:none">
+<header>
+  <h1>ECO SPY<small>교사 화면</small></h1>
+  <div class="codeBox"><span>반 번호</span><span class="code" id="code">----</span></div>
+  <span class="url" id="url"></span>
+  <span style="flex:1"></span>
+  <label class="toggle"><input type="checkbox" id="showRoles"> 역할 보기 <small style="font-weight:500;color:#9fd8ff">(화면 띄울 때는 끄기)</small></label>
+</header>
+<main>
+  <div>
+    <div class="frame"><div class="tab">진행</div><div class="inner">
+      <div class="btns grid2">
+        <button class="tb" data-skin="announce" id="assignBtn">자동 모둠 배정</button>
+        <button class="tb" data-skin="start" id="startBtn">▶ 전체 시작</button>
+        <button class="tb" data-skin="end" id="stopBtn">■ 전체 그만하기</button>
+        <button class="tb" data-skin="view" id="clearBtn">모둠 모두 풀기</button>
+      </div>
+      <div class="hint">· 모둠은 7~9명씩 나뉘어요. (인원이 애매하면 6~10명)<br>· 끝난 모둠은 [전체 시작]이나 모둠의 [다시 하기]로 같은 친구들과 다시 해요.<br>· 늦게 온 학생은 [자동 모둠 배정]을 다시 누르거나 이름 옆에서 모둠을 골라 주세요. (게임 중인 모둠은 그대로 둬요)</div>
+    </div></div>
+    <div class="frame"><div class="tab">설정</div><div class="inner">
+      <div class="set">
+        <span>수호자 1명당 목표 문제 수</span><input type="number" id="perGuardian" min="2" max="10">
+        <span>제한 시간(분)</span><input type="number" id="timeLimit" min="3" max="30">
+        <span>고장 수리 제한 시간(초)</span><input type="number" id="sabTime" min="20" max="120">
+        <span>방해 쿨타임(초)</span><input type="number" id="sabCd" min="15" max="120">
+        <span>오염시키기 쿨타임(초)</span><input type="number" id="freezeCd" min="15" max="120">
+        <span>회의 시간(초)</span><input type="number" id="meetingTime" min="40" max="180">
+      </div>
+      <div class="checks" style="margin-top:10px">
+        <label><input type="checkbox" id="revealRole"> 추방되면 역할 공개</label>
+        <label><input type="checkbox" id="parityWin"> 파괴범 수 ≥ 남은 인원이면 파괴범 승리</label>
+        <div class="hint" style="margin-top:8px;font-weight:700">중립 직업 (체크한 것 중 무작위)</div>
+        <label><input type="checkbox" class="job" value="reporter"><img data-role="reporter" alt=""> 환경 기자</label>
+        <label><input type="checkbox" class="job" value="trash"><img data-role="trash" alt=""> 쓰레기 괴물</label>
+        <label><input type="checkbox" class="job" value="investor"><img data-role="investor" alt=""> 환경 투자자</label>
+      </div>
+      <div class="btns grid2" style="align-items:center"><button class="tb" data-skin="confirm" id="saveBtn">설정 저장</button><span class="hint" id="saveMsg"></span></div>
+      <div class="hint">설정은 다음 판부터 적용돼요. 7명 모둠은 파괴범이 유리하니 오염시키기 쿨타임을 50초쯤으로 늘려도 좋아요.</div>
+    </div></div>
+    <div class="frame"><div class="tab">접속한 학생 <span id="stuCount" style="font-size:14px;color:#cfe9ff"></span></div><div class="inner">
+      <div class="stu" id="students"></div>
+    </div></div>
+  </div>
+  <div>
+    <div class="rooms" id="rooms"></div>
+    <div class="frame"><div class="tab">점수 순위</div><div class="inner">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span class="hint">승리하면 수호자 +1점, 파괴범·중립 +2점</span><span style="flex:1"></span><button class="tb" data-skin="cancel" id="resetScore" style="width:180px">점수 초기화</button></div>
+      <table id="rank"></table>
+    </div></div>
+  </div>
+</main>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const socket = io();
+let T = null, settingsLoaded = false, A = null;
+const saved = (() => { try { return JSON.parse(localStorage.getItem("eco_teacher") || "null"); } catch (e) { return null; } })();
+if (saved) $("resumeHint").innerHTML = `지난 반(${saved.code})으로 다시 들어가는 중…`;
+
+// 그림 불러오기
+const BTN_SKIN = { start: "start", end: "end", pause: "pause", confirm: "confirm", cancel: "cancel", announce: "announce", view: "view", reward: "reward", reconnect: "reconnect" };
+// 2차 디자인: 반짝이는 알약 버튼 (색은 data-skin 으로)
+function skinBtn(b) { b.classList.add("c-" + (b.dataset.skin || "start")); }
+function avatar(skin, frame, h) {
+  if (!A) return "";
+  const C = A.chars, c = C.colors[(skin | 0) % C.colors.length], s = h / C.cell[1];
+  return `<span class="av" style="width:${(C.cell[0] * s).toFixed(1)}px;height:${h}px;background-image:url(${c.sheet});background-size:${(C.cell[0] * C.frames.length * s).toFixed(1)}px ${h}px;background-position:${(-C.cell[0] * frame * s).toFixed(1)}px 0"></span>`;
+}
+function gaugeClip(h, p) {
+  const k = h / 116, l = 33 * k, r = 36 * k;
+  p = Math.max(0, Math.min(1, p));
+  return `inset(0 calc(${(1 - p).toFixed(4)} * (100% - ${(l + r).toFixed(1)}px) + ${r.toFixed(1)}px) 0 0)`;
+}
+function gauge(fill, p) {
+  const c = fill === "mission" ? "green" : "red", G = A.v2.gauge;
+  p = Math.max(0, Math.min(1, p));
+  return `<div class="gauge g2"><span class="ge" style="border-image-source:url(${G.empty})"></span>${p > 0.005 ? `<span class="gf" style="border-image-source:url(${G["pill_" + c]});width:calc((100% - 11px) * ${p.toFixed(4)})"></span>` : ""}</div>`;
+}
+fetch("assets/manifest.json").then(r => r.json()).then(m => {
+  A = m;
+  $("bg").style.backgroundImage = `url(${m.map.image})`;
+  for (const b of document.querySelectorAll(".tb")) skinBtn(b);
+  for (const i of document.querySelectorAll("img[data-role]")) i.src = m.v2.role_badge[i.dataset.role];
+  $("startAv").innerHTML = [0, 1, 2, 3, 4].map(i => avatar(i, 0, 70)).join("");
+  for (const el of [$("rooms"), $("students"), $("rank")]) el._h = null;
+  render();
+});
+
+socket.on("connect", () => {
+  if (saved || T) {
+    const s = T ? { code: T.code, key: T.key } : saved;
+    socket.emit("t:resume", s, (r) => {
+      if (r && r.ok) { T = Object.assign(T || {}, { code: s.code, key: s.key }); enter(); }
+      else { $("resumeHint").textContent = "지난 반은 끝났어요. 새 반을 만들어 주세요."; }
+    });
+  }
+});
+$("createBtn").onclick = () => socket.emit("t:create", null, (r) => {
+  T = { code: r.code, key: r.key };
+  try { localStorage.setItem("eco_teacher", JSON.stringify(T)); } catch (e) {}
+  enter();
+});
+function enter() {
+  $("startView").style.display = "none"; $("mainView").style.display = "";
+  $("code").textContent = T.code;
+  $("url").textContent = `학생 주소: ${location.origin}/?code=${T.code}`;
+}
+const call = (ev, data) => socket.emit(ev, data || {}, (r) => { if (r && r.msg) alert(r.msg); });
+$("assignBtn").onclick = () => call("t:assign");
+$("startBtn").onclick = () => socket.emit("t:start", {}, (r) => { if (r && r.started === 0) alert("시작할 모둠이 없어요. 먼저 [자동 모둠 배정]을 눌러 주세요. (모둠마다 3명 이상)"); });
+$("stopBtn").onclick = () => { if (confirm("진행 중인 모든 게임을 멈출까요?")) call("t:stop"); };
+$("clearBtn").onclick = () => { if (confirm("모둠을 모두 풀까요? 진행 중인 게임도 사라져요.")) call("t:clearRooms"); };
+$("resetScore").onclick = () => { if (confirm("점수를 모두 0으로 만들까요?")) call("t:resetScores"); };
+$("showRoles").onchange = () => render();
+$("saveBtn").onclick = () => {
+  const d = {};
+  for (const k of ["perGuardian", "timeLimit", "sabTime", "sabCd", "freezeCd", "meetingTime"]) d[k] = $(k).value;
+  d.revealRole = $("revealRole").checked; d.parityWin = $("parityWin").checked;
+  d.neutralJobs = [...document.querySelectorAll(".job:checked")].map(x => x.value);
+  if (!d.neutralJobs.length) { alert("중립 직업을 하나 이상 골라 주세요."); return; }
+  socket.emit("t:settings", d, () => { $("saveMsg").textContent = "저장했어요 ✓"; setTimeout(() => $("saveMsg").textContent = "", 2000); });
+};
+
+socket.on("tstate", (v) => {
+  if (!T) return;
+  T.v = v;
+  if (!settingsLoaded) {
+    const s = v.settings;
+    for (const k of ["perGuardian", "timeLimit", "sabTime", "sabCd", "freezeCd", "meetingTime"]) $(k).value = s[k];
+    $("revealRole").checked = s.revealRole; $("parityWin").checked = s.parityWin;
+    for (const j of document.querySelectorAll(".job")) j.checked = s.neutralJobs.includes(j.value);
+    settingsLoaded = true;
+  }
+  render();
+});
+function setHTML(el, html) { if (el._h !== html) { el._h = html; el.innerHTML = html; return true; } return false; }
+const PH = { lobby: "대기", play: "게임 중", meeting: "회의 중", result: "투표 결과", ended: "끝" };
+const PH_IC = { lobby: "waiting", play: "running", meeting: "issue", result: "issue", ended: "complete" };
+function fmt(ms) { ms = Math.max(0, ms); const s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+function render() {
+  if (!T || !T.v || !A) return;
+  const v = T.v, show = $("showRoles").checked;
+  const skew = v.t - Date.now();
+  const roomOpts = (sel) => `<option value="">-</option>` + v.rooms.map(r => `<option value="${r.id}" ${sel === r.id ? "selected" : ""}>${esc(r.name)}</option>`).join("") + `<option value="new">새 모둠</option>`;
+  $("stuCount").textContent = `${v.students.length}명 · 접속 ${v.students.filter(s => s.online).length}명`;
+  const busySel = document.activeElement && document.activeElement.tagName === "SELECT";
+  const stuHTML = v.students.map(s => `<span class="chip ${s.online ? "" : "off"}"><img src="${A.teacher[s.online ? "ready" : "offline"]}" alt="">${esc(s.name)}
+      <select data-c="${s.cid}">${roomOpts(s.roomId)}</select><button class="x" data-k="${s.cid}" title="내보내기">✕</button></span>`).join("") || '<span class="hint">학생들이 학생 주소로 들어오면 여기에 보여요.</span>';
+  if (!busySel && setHTML($("students"), stuHTML)) {
+    for (const sel of $("students").querySelectorAll("select")) sel.onchange = () => call("t:move", { cid: sel.dataset.c, roomId: sel.value });
+    for (const b of $("students").querySelectorAll(".x")) b.onclick = () => { if (confirm("이 학생을 내보낼까요?")) call("t:kick", { cid: b.dataset.k }); };
+  }
+  const roomsChanged = setHTML($("rooms"), v.rooms.map(r => {
+    let body = "";
+    if (r.players) {
+      body = `<div class="bars">
+        <img src="${A.v2.role_badge.guardian}" alt="">${gauge("mission", r.progress / 100)}<span>${r.progress}%</span>
+        <img src="${A.v2.props.smoke.src}" alt="">${gauge("pollution", r.pollution / 100)}<span>${r.pollution}%</span>
+      </div>
+      <div class="sub2">${r.phase === "ended" ? "" : `남은 시간 <span class="left" data-ends="${r.endsAt}"></span>`}${r.sab ? ' · <span class="warn">⚠ 시설 고장 중</span>' : ""}</div>
+      <div class="pl">${r.players.map(p => {
+        const rc = p.role === "destroyer" ? "rD" : p.role === "neutral" ? "rN" : "rG";
+        return `<span class="pp ${p.alive ? "" : "out"} ${p.win ? "win" : ""}" title="정답 ${p.correct}개">${avatar(p.skin, p.alive ? 0 : (A.chars.idx ? A.chars.idx.ghost : 10), 30)}${esc(p.name)}${show ? ` <small class="${rc}">${esc(p.label.replace("중립 · ", ""))}</small>` : ""} <small>${p.correct}</small>${p.win ? "🏆" : ""}</span>`;
+      }).join("")}</div>
+      ${r.end ? `<div class="endline" style="color:${r.end.team === "guardian" ? "#11804a" : "#c22f35"}">${r.end.team === "guardian" ? "환경 수호자 승리" : "환경 파괴범 승리"} <span class="hint">${esc(r.end.reason)}</span></div>` : ""}
+      <div class="feed">${(r.feed || []).map(f => esc(f.text)).join("<br>")}</div>`;
+    } else body = `<div class="pl">${r.members.map(m => `<span class="pp ${m.online ? "" : "out"}"><img src="${A.teacher[m.online ? "ready" : "offline"]}" style="width:22px;height:22px" alt="">${esc(m.name)}</span>`).join("")}</div>`;
+    const btn = (r.phase === "lobby" || r.phase === "ended")
+      ? `<button class="tb" data-skin="start" data-start="${r.id}">${r.phase === "ended" ? "다시 하기" : "시작"}</button>`
+      : `<button class="tb" data-skin="end" data-stop="${r.id}">그만</button>`;
+    return `<div class="frame room"><div class="tab">${esc(r.name)}</div><div class="inner">
+      <div class="rhead"><img src="${A.teacher[PH_IC[r.phase] || "waiting"]}" alt=""><b>${r.members.length}명</b><span class="ph ${r.phase}">${PH[r.phase] || r.phase}</span></div>
+      ${body}<div class="btns" style="margin:10px 0 0">${btn}</div></div></div>`;
+  }).join("") || `<div class="empty hint"><b>아직 모둠이 없어요.</b> 학생들이 다 들어오면 [자동 모둠 배정]을 눌러 주세요.</div>`);
+  for (const sp of $("rooms").querySelectorAll(".left")) sp.textContent = fmt(+sp.dataset.ends - (Date.now() + skew));
+  if (roomsChanged) {
+    for (const b of $("rooms").querySelectorAll(".tb")) skinBtn(b);
+    for (const b of $("rooms").querySelectorAll("[data-start]")) b.onclick = () => socket.emit("t:start", { roomId: b.dataset.start }, (r) => { if (r && r.started === 0) alert("3명 이상이어야 시작할 수 있어요."); });
+    for (const b of $("rooms").querySelectorAll("[data-stop]")) b.onclick = () => { if (confirm("이 모둠의 게임을 멈출까요?")) call("t:stop", { roomId: b.dataset.stop }); };
+  }
+  const rk = v.students.slice().sort((a, b) => b.score - a.score || b.correct - a.correct);
+  setHTML($("rank"), `<tr><th>순위</th><th>이름</th><th>점수</th><th>승리/판</th><th>맞힌 문제</th></tr>` +
+    rk.map((s, i) => `<tr><td>${i < 3 ? ["🥇", "🥈", "🥉"][i] : i + 1}</td><td>${esc(s.name)}</td><td><b>${s.score}</b></td><td>${s.wins}/${s.games}</td><td>${s.correct}</td></tr>`).join(""));
+}
+setInterval(render, 1000);
+</script>
+</body>
+</html>
